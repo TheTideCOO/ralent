@@ -1,2 +1,2 @@
 # ralent
-Ralent is a 3D game engine is a project aimed at creating a versatile and efficient engine for generating and rendering 3D scenes using code.
+Ralent is a extremely basic 3D game engine mainly created in Java.
