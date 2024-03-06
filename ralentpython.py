@@ -136,5 +136,5 @@ class Sphere(Shape):
         return False
 
 if __name__ == "__main__":
-    window = ShapeDrawer(800, 600, "Shape Drawer")
+    window = ShapeDrawer(800, 600, "Ralent3D")
     pyglet.app.run()
