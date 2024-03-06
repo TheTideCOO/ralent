@@ -7,16 +7,11 @@ class ShapeDrawer(pyglet.window.Window):
         super().__init__(*args, **kwargs)
         self.shapes = []
         self.selected_shape = None
-
-        # Create menu
-        self.menu = pyglet.menu.Menu()
-        self.menu.add_command("Add Cube", self.add_cube)
-        self.menu.add_command("Add Sphere", self.add_sphere)
-        self.menu.add_command("Save Scene", self.save_scene)
-        self.menu.add_command("Load Scene", self.load_scene)
+        self.menu_opened = False
 
     def on_draw(self):
         self.clear()
+        self.draw_menu()
         for shape in self.shapes:
             shape.draw()
 
@@ -32,6 +27,32 @@ class ShapeDrawer(pyglet.window.Window):
         else:
             self.selected_shape = None
 
+        if self.menu_opened:
+            if x >= 100 and x <= 200 and y >= 400 and y <= 450:
+                self.add_cube()
+            elif x >= 100 and x <= 200 and y >= 350 and y <= 400:
+                self.add_sphere()
+            self.menu_opened = False
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol == pyglet.window.key.M:
+            self.menu_opened = not self.menu_opened
+
+    def draw_menu(self):
+        if self.menu_opened:
+            glColor3f(0.5, 0.5, 0.5)
+            glBegin(GL_QUADS)
+            glVertex2f(0, 0)
+            glVertex2f(self.width, 0)
+            glVertex2f(self.width, self.height)
+            glVertex2f(0, self.height)
+            glEnd()
+
+            pyglet.text.Label("Menu", font_size=20, x=10, y=self.height - 20).draw()
+
+            pyglet.text.Label("Add Cube", font_size=16, x=10, y=self.height - 50).draw()
+            pyglet.text.Label("Add Sphere", font_size=16, x=10, y=self.height - 100).draw()
+
     def add_cube(self):
         cube = self.create_cube(100, 100, 100, (100, 100))
         self.shapes.append(cube)
@@ -40,35 +61,17 @@ class ShapeDrawer(pyglet.window.Window):
         sphere = self.create_sphere(50, (200, 200))
         self.shapes.append(sphere)
 
-    def save_scene(self):
-        with open("scene.json", "w") as f:
-            json.dump([shape.serialize() for shape in self.shapes], f)
-
-    def load_scene(self):
-        with open("scene.json", "r") as f:
-            data = json.load(f)
-        self.shapes = [self.deserialize_shape(shape_data) for shape_data in data]
-
     def create_cube(self, width, height, depth, position, color=(255, 0, 0)):
         return Cube(width, height, depth, position, color)
 
     def create_sphere(self, radius, position, color=(0, 0, 255)):
         return Sphere(radius, position, color)
 
-    def deserialize_shape(self, data):
-        if data["type"] == "cube":
-            return Cube(data["width"], data["height"], data["depth"], data["position"], data["color"])
-        elif data["type"] == "sphere":
-            return Sphere(data["radius"], data["position"], data["color"])
-
 class Shape:
     def __init__(self, color):
         self.color = color
 
     def draw(self):
-        pass
-
-    def serialize(self):
         pass
 
     @staticmethod
@@ -93,16 +96,6 @@ class Cube(Shape):
         glVertex2f(x, y + self.height)
         glEnd()
 
-    def serialize(self):
-        return {
-            "type": "cube",
-            "width": self.width,
-            "height": self.height,
-            "depth": self.depth,
-            "position": self.position,
-            "color": self.color
-        }
-
     @staticmethod
     def contains_point(x, y):
         return False
@@ -123,18 +116,11 @@ class Sphere(Shape):
         glutSolidSphere(self.radius, slices, stacks)
         glPopMatrix()
 
-    def serialize(self):
-        return {
-            "type": "sphere",
-            "radius": self.radius,
-            "position": self.position,
-            "color": self.color
-        }
-
     @staticmethod
     def contains_point(x, y):
         return False
 
 if __name__ == "__main__":
-    window = ShapeDrawer(800, 600, "Ralent3D")
+    window = ShapeDrawer(800, 600, "Shape Drawer")
     pyglet.app.run()
+
