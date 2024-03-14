@@ -12,6 +12,8 @@ class Ralent (pyglet.window.Window):
         self.redo_stack = []
 
     def on_draw(self):
+        # Set background color
+        glClearColor(0.8, 0.8, 0.8, 1.0)
         self.clear()
         self.draw_menu()
         for shape in self.shapes:
