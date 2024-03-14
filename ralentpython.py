@@ -2,7 +2,7 @@ import pyglet
 from pyglet.gl import *
 import json
 
-class ShapeDrawer(pyglet.window.Window):
+class Ralent (pyglet.window.Window):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.shapes = []
@@ -165,4 +165,8 @@ class Sphere(Shape):
         glPushMatrix()
         glTranslatef(x, y, 0)
         glutSolidSphere(self.radius, slices, stacks
+
+if __name__ == "__main__":
+    window = ShapeDrawer(800, 600, "Ralent v0.12")
+    pyglet.app.run()
 
